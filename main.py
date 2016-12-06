@@ -12,6 +12,7 @@ import subprocess
 import RPi.GPIO as GPIO
 import threading
 import numpy as np
+import time
 
 sensitive4g = 0x1c
 
@@ -49,7 +50,7 @@ def main(argv):
 
     accel=[[] for i in range(int(deviceNum))]  #create dynamic list
     gyro=[[] for i in range(int(deviceNum))]
-    fileName=[subName+'_accel_sensor1.txt',subname+'_gyro_sensor1.txt',subname+'_gyro_sensor2.txt',subname+'_gyro_sensor2.txt',]
+    fileName=[subName+'sensor1.txt',subname+'sensor2.txt']
     
     print ""
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
@@ -60,15 +61,12 @@ def main(argv):
 
 
     file0=open(fileName[0],'w')
-    file1=open(fileName[1],'w')
-    if int(deviceNum)==1:
-        file2=open(fileName[2],'w')
-        file3=open(fileName[3],'w')
+    if int(deviceNum)==2:
+        file1=open(fileName[1],'w')
     timeFile=open("dataTime.txt",'w')
-    fileList=[file0,file1,file2,file3]
-        
-
+    fileList=[file0,file1]
     accel_tmp=[0]*int(deviceNum)
+    start=time.time()
     while True:
         fileIndex=0
         input_state=GPIO.input(4)   #get switch state
@@ -88,28 +86,32 @@ def main(argv):
         gyro_xout=gyro_xout/131
         gyro_yout=gyro_yout/131
         gyro_zout=gyro_zout/131
-        fileList[fileIndex].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
-        fileList[fileIndex+1].write("%f\t%f\t%f\n" %(gyro_xout,gyro_yout,gyro_zout))
-        if int(deviceNum)==1:
-            #read slave sensor
-            mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
-            gyro_xout = mpu6050_sla.read_word_2c(0x43)
-            gyro_yout = mpu6050_sla.read_word_2c(0x45)
-            gyro_zout = mpu6050_sla.read_word_2c(0x47)
-            accel_xout = mpu6050_sla.read_word_2c(0x3b)
-            accel_yout = mpu6050_sla.read_word_2c(0x3d)
-            accel_zout = mpu6050_sla.read_word_2c(0x3f)
-            accel_xout=accel_xout/16384
-            accel_yout=accel_yout/16384
-            accel_zout=accel_zout/16384
-            fileList[fileIndex+2].write("%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout))
-            fileList[fileIndex+3].write("%f\t%f\t%f\n" %(gyro_xout,gyro_yout,gyro_zout))
-                
-                    
+        end=time.time()
+        realtime=end-start
+        fileList[fileIndex].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
+        #get slave sensor gyro and accelerometer value
+        mpu6050_sla=MPU6050Read.MPU6050Read(0x69,1)
+        gyro_xout = mpu6050_sla.read_word_2c(0x43)
+        gyro_yout = mpu6050_sla.read_word_2c(0x45)
+        gyro_zout = mpu6050_sla.read_word_2c(0x47)
+        accel_xout = mpu6050_sla.read_word_2c(0x3b)
+        accel_yout = mpu6050_sla.read_word_2c(0x3d)
+        accel_zout = mpu6050_sla.read_word_2c(0x3f)
+        accel_xout=accel_xout/16384
+        accel_yout=accel_yout/16384
+        accel_zout=accel_zout/16384
+        gyro_xout=gyro_xout/131
+        gyro_yout=gyro_yout/131
+        gyro_zout=gyro_zout/131
+        end=time.time()
+        realtime=end-start
+        fileList[fileIndex].write("%f\t%f\t%f\t%f\t%f\t%f\t%f\n" %(accel_xout,accel_yout,accel_zout,gyro_xout,gyro_yout,gyro_zout,realtime))
         count+=1
         if input_state==False:
+            ttime=time.time()-start
             print "Button Pressed experimental stop"
-            print "count Num = %d" %count
+            print "Total time : %d Amount of data = %f" %ttime
+            print "Amount of data = %d" %count
             sys.exit()
             break 
         
