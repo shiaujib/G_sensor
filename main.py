@@ -12,7 +12,6 @@ import subprocess
 import RPi.GPIO as GPIO
 import threading
 import numpy as np
-import time
 
 sensitive4g = 0x1c
 

@@ -55,6 +55,7 @@ class MPU6050Read():
         print "accel_yout: ", accel_yout, " scaled: ", accel_yout_scaled
         print "accel_zout: ", accel_zout, " scaled: ", accel_zout_scaled
 
+'''
 ################################     main      ######################################
     bus = smbus.SMBus(1) # or bus = smbus.SMBus(1) for Revision 2 boards
     address = 0x68       # This is the address value read via the i2cdetect command
@@ -80,16 +81,6 @@ class MPU6050Read():
         accel_yout_scaled = accel_yout / 16384.0
         accel_zout_scaled = accel_zout / 16384.0
         
-        if(accel_xout>=32768||accel_yout>=32768||accel_zout>=32768){
-            write_byte_data(address,sensitive4g,0b00010000)  #change to +-4g mode
-            accel_xout = read_word_2c(0x3b)
-            accel_yout = read_word_2c(0x3d)
-            accel_zout = read_word_2c(0x3f)
-            accel_xout_scaled = accel_xout / 8192.0
-            accel_yout_scaled = accel_yout / 8192.0
-            accel_zout_scaled = accel_zout / 8192.0
-            
-        }
 
         print "accel_xout: ", accel_xout, " scaled: ", accel_xout_scaled
         print "accel_yout: ", accel_yout, " scaled: ", accel_yout_scaled
@@ -97,4 +88,4 @@ class MPU6050Read():
 
         print "x rotation: " , get_x_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
         print "y rotation: " , get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
-
+'''
