@@ -23,9 +23,9 @@ GPIO.setup(4,GPIO.IN,pull_up_down=GPIO.PUD_UP)
 timeArray=[None]*100000000
 #/*=========================================================================*/
 
-        
-    
-    
+
+
+
 # Main Program
 def main(argv):
     try:
@@ -44,13 +44,13 @@ def main(argv):
             print 'usage:muti_accelerometer.py -i <deviceNumber>'
         elif opt in ("-n","--deviceNumber"):
             deviceNum=arg
-	elif opt in ("-s","--subjectName"):
-            subName=arg
+    elif opt in ("-s","--subjectName"):
+        subName=arg
 
     accel=[[] for i in range(int(deviceNum))]  #create dynamic list
     gyro=[[] for i in range(int(deviceNum))]
     fileName=[subName+'sensor1.txt',subname+'sensor2.txt']
-    
+
     print ""
     print "Program Started at:"+ time.strftime("%Y-%m-%d %H:%M:%S")
     print ""
@@ -69,7 +69,7 @@ def main(argv):
     while True:
         fileIndex=0
         input_state=GPIO.input(4)   #get switch state
-	print "getting data please press button to stop........"
+    print "getting data please press button to stop........"
         mpu6050 = MPU6050Read.MPU6050Read(0x68,1)
         tca9548.write_control_register(BusChannel[fileIndex])
         #get gyro and accelerometer value
@@ -113,13 +113,13 @@ def main(argv):
             print "Amount of data = %d" %count
             sys.exit()
             break 
-        
+
 
 
 
 if __name__=="__main__":
     sub_name=None
     main(sys.argv[1:])
-        
+
 
 
